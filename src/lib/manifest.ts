@@ -10,19 +10,23 @@ export const KIND = 'Engineer';
 
 export const MANIFEST_HEADER = [
   'GET https://akila.dev/akila.yaml',
-  'The same resource the human view renders, generated at build time.',
+  'The same resource the human view at https://akila.dev renders.',
 ] as const;
 
 export interface ManifestOptions {
   /** Adds status.localTime as a slot the browser keeps current. Page only. */
   liveClock?: boolean;
+  /** Adds status.localTime with this value, e.g. "16:02". Used by the Worker. */
+  localTime?: string;
 }
 
 export function manifest(p: Profile, opts: ManifestOptions = {}): { [key: string]: YamlNode } {
   const status: { [key: string]: YamlNode } = {
     conditions: [{ type: p.condition.type, status: p.condition.status, reason: p.condition.reason, message: p.condition.message }],
   };
-  if (opts.liveClock) status.localTime = new Commented(new Slot('data-clock'), `UTC${p.location.utcOffset}`);
+  const zone = `UTC${p.location.utcOffset}`;
+  if (opts.liveClock) status.localTime = new Commented(new Slot('data-clock'), zone);
+  else if (opts.localTime) status.localTime = new Commented(opts.localTime, zone);
 
   return {
     apiVersion: API_VERSION,

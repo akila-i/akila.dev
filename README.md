@@ -9,7 +9,7 @@ One profile, rendered for people and for kubectl.
 | `/` human view (`kubectl describe` layout, expandable career trace) | `src/pages/index.astro`, `src/components/*` |
 | `/` yaml view, `/akila.yaml` | `src/lib/manifest.ts` → `src/lib/yaml.ts` |
 | `/akila.json` | same manifest, as JSON |
-| `curl akila.dev` card (preview on the page; the Worker comes later) | `src/lib/card.ts` |
+| `curl akila.dev` card (and its preview on the page) | `src/lib/card.ts` |
 
 ## Develop
 
@@ -19,8 +19,20 @@ Requires Node 22.23+ (see `.nvmrc`).
 nvm use
 npm install
 npm run dev       # http://localhost:4321
-npm run verify    # astro check + vitest + build
+npm run preview   # build, then run the site behind the edge Worker: http://localhost:8787
+npm run verify    # typecheck + tests + build
 ```
+
+## Edge Worker
+
+`worker/index.ts` runs in front of the static build on Cloudflare Workers:
+
+- `curl akila.dev` (also wget, HTTPie, xh and PowerShell) gets the ANSI card instead of HTML
+- `/akila.yaml` and `/akila.json` include the current local time and allow cross-origin reads
+- `www.akila.dev` redirects to `https://akila.dev`
+- everything else is served from `dist/`, with headers from `public/_headers`
+
+It imports the same profile and renderers as the site, so there is no second copy of any content.
 
 ## Notes
 

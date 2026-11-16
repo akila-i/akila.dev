@@ -1,0 +1,66 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Not found · akila.dev" description="This page does not exist on akila.dev.">
+  <main class="nf wrap">
+    <a class="nf-mark" href="/">akila<span>.</span>dev</a>
+    <div class="nf-body">
+      <p class="nf-cmd">$ kubectl get page <span data-path>this-page</span></p>
+      <h1>Error from server (NotFound): pages "<span data-path>this-page</span>" not found</h1>
+      <p class="nf-next">
+        Try <a href="/">kubectl describe engineer akila</a> or <a href="/akila.yaml">akila.yaml</a>.
+      </p>
+    </div>
+  </main>
+  <script is:inline>
+    document.querySelectorAll('[data-path]').forEach(function (n) {
+      n.textContent = decodeURIComponent(location.pathname);
+    });
+  </script>
+</Base>
+
+<style>
+  .nf {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 2rem;
+    padding-block: 1.1rem 3rem;
+    font-family: var(--font-mono);
+    font-stretch: 87.5%;
+  }
+  .nf-mark {
+    font-size: var(--step--1);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .nf-mark span {
+    color: var(--accent);
+  }
+  .nf-body {
+    align-self: center;
+    max-width: 52rem;
+  }
+  .nf-cmd {
+    margin: 0 0 1rem;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  h1 {
+    margin: 0 0 1.5rem;
+    font-size: clamp(1.25rem, 3.4vw, 2rem);
+    line-height: 1.35;
+    font-weight: 600;
+    color: var(--accent);
+    overflow-wrap: anywhere;
+  }
+  .nf-next {
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--ink-2);
+  }
+  .nf-next a {
+    color: var(--ink);
+  }
+</style>

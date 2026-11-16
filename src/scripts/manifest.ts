@@ -3,6 +3,7 @@
  * the human ⇄ yaml switch, the theme button, expandable trace rows and the Colombo clock.
  * The page is fully rendered at build time; this only adds interaction.
  */
+import { formatClock } from '../lib/dates';
 
 type Mode = 'human' | 'yaml';
 
@@ -142,10 +143,9 @@ layers.human.addEventListener('click', (e) => {
 /* ---------- local time in Colombo, updated on the minute ---------- */
 
 const timeZone = must<HTMLElement>('main').dataset.tz ?? 'UTC';
-const clock = new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit' });
 
 function paintClock(): void {
-  const now = clock.format(new Date());
+  const now = formatClock(timeZone);
   document.querySelectorAll<HTMLElement>('[data-clock]').forEach((n) => (n.textContent = now));
   document.querySelectorAll<HTMLElement>('[data-clock-wrap]').forEach((n) => (n.hidden = false));
 }

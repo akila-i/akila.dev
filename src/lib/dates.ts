@@ -39,6 +39,11 @@ export function spanMonths(start: string, end: string | null, now: number): numb
   return monthsBetween(monthStart(start), end ? monthStart(end) : now) + 1;
 }
 
+/** The time of day in an IANA time zone, e.g. "16:02". */
+export function formatClock(timeZone: string, at: Date = new Date()): string {
+  return new Intl.DateTimeFormat('en-GB', { timeZone, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(at);
+}
+
 /** 21 → "1y 9mo" */
 export function formatDuration(months: number): string {
   if (months < 1) return '<1mo';
