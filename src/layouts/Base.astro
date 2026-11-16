@@ -11,6 +11,9 @@ interface Props {
 
 const { title, description } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+
+/** Cloudflare Web Analytics: cookieless page-view counts. The site token is public by design. */
+const CF_BEACON = JSON.stringify({ token: '97dab38e242645c5b31c2ba9bc3db22e' });
 ---
 
 <!doctype html>
@@ -47,5 +50,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body>
     <slot />
+    {
+      // Production builds only, so local development visits are not counted.
+      import.meta.env.PROD && <script is:inline type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={CF_BEACON} />
+    }
   </body>
 </html>
