@@ -1,0 +1,86 @@
+---
+import '../styles/manifest.css';
+import Base from '../layouts/Base.astro';
+import Bar from '../components/Bar.astro';
+import Hero from '../components/Hero.astro';
+import Field from '../components/Field.astro';
+import Trace from '../components/Trace.astro';
+import Ingress from '../components/Ingress.astro';
+import YamlView from '../components/YamlView.astro';
+import { profile as p } from '../data/profile';
+import { build } from '../lib/build';
+import { formatMonth } from '../lib/dates';
+
+const title = `${p.name} · akila.dev`;
+const roles = p.roles.map((r) => `${r.title}, ${r.org}`).join(' · ');
+const description = `${roles}. ${p.summary}`;
+const writing = [...p.writing].sort((a, b) => b.date.localeCompare(a.date));
+---
+
+<Base title={title} description={description}>
+  <a class="skip" href="#top">Skip to content</a>
+  <Bar />
+
+  <main id="top" data-tz={p.location.timeZone}>
+    <div class="wrap stage" id="stage">
+      <div class="layer layer-human" data-layer="human">
+        <Hero profile={p} />
+
+        <Field id="k-spec" label="Spec" hint="what I work on" class="focus">
+          {
+            p.focus.map((f) => (
+              <div>
+                <h3>{f.name}</h3>
+                <p>{f.text}</p>
+                <div class="stack">{f.stack.join(' · ')}</div>
+              </div>
+            ))
+          }
+        </Field>
+
+        <Field id="k-trace" label="Trace" hint="career and work">
+          <Trace spans={p.career} openSpan={p.openSpan} now={build.now} />
+        </Field>
+
+        <Field id="k-writing" label="Writing" hint="long-form posts">
+          <ol class="w-list">
+            {
+              writing.map((w) => (
+                <li class="w-row">
+                  <span class="w-date">{formatMonth(w.date)}</span>
+                  <div>
+                    <span class="w-title">
+                      <a href={w.href}>{w.title}</a>
+                    </span>
+                    <span class="w-venue">{w.venue}</span>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </Field>
+
+        <Field id="k-ingress" label="Ingress" hint="get in touch" class="ingress">
+          <Ingress profile={p} />
+        </Field>
+      </div>
+
+      <div class="layer layer-yaml" data-layer="yaml">
+        <YamlView profile={p} />
+      </div>
+
+      <div class="scan" id="scan" aria-hidden="true"><span id="scan-cmd"></span></div>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <span><b>akila.dev</b> · one profile, rendered for people and for kubectl</span>
+      <span id="buildmeta">build {build.sha} · {build.date}</span>
+    </div>
+  </footer>
+
+  <script>
+    import '../scripts/manifest';
+  </script>
+</Base>

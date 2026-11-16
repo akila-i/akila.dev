@@ -1,0 +1,19 @@
+---
+import type { Profile } from '../data/profile';
+import { manifest, MANIFEST_HEADER } from '../lib/manifest';
+import { lineToHtml, yamlLines } from '../lib/yaml';
+
+interface Props {
+  profile: Profile;
+}
+
+const { profile } = Astro.props;
+const lines = yamlLines(manifest(profile, { liveClock: true }), MANIFEST_HEADER);
+const html = lines.map((l) => `<span class="ln">${lineToHtml(l)}</span>`).join('');
+---
+
+<div class="yaml-head">
+  <span><b>$</b> kubectl get engineer akila -o yaml</span>
+  <span>{lines.length} lines · also served at <a href="/akila.yaml">akila.dev/akila.yaml</a></span>
+</div>
+<pre class="code" tabindex="0" aria-label="Profile as YAML" set:html={html} />

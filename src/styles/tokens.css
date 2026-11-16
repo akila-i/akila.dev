@@ -1,0 +1,64 @@
+/*
+ * Design tokens.
+ * Layout: a `kubectl describe` spec sheet. A mono key column sits beside a content column.
+ *
+ * Light ("Ceylon") is the default for everyone. Dark ("Cobalt") applies only when the
+ * visitor picks it with the theme button, which sets data-theme="dark" on <html>.
+ */
+:root {
+  /* light: Ceylon. Maroon and teal from the Sri Lankan flag, on a rose-grey ground */
+  --paper: #ece9ea;
+  --sheet: #f8f7f7;
+  --ink: #1a1013;
+  --ink-2: #5a4a4f;
+  --ink-3: #8e7f84;
+  --rule: #d6ced0;
+  --accent: #8d153a;
+  --number: #8a5600;
+  --ok: #00665e;
+  --kind-edu: #7a6a70;
+  --kind-work: #8d153a;
+  --kind-oss: #00665e;
+  --term-bg: #1e1216;
+  --term-acc: #ffbe29;
+  /* always drawn on the dark terminal surface */
+  --term-ink: #d5dce3;
+  --term-dim: #7d8996;
+  --term-ok: #5ccb93;
+
+  --font-sans: 'Instrument Sans Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono: 'Martian Mono Variable', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --step--2: 0.6875rem;
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.1875rem;
+  --step-2: 1.5rem;
+  --display: clamp(3.25rem, 11.5vw, 8.75rem);
+
+  --key-col: 10.5rem;
+  --maxw: 74rem;
+  --bar-h: 3.25rem;
+  --top: env(safe-area-inset-top, 0px);
+
+  color-scheme: light;
+}
+
+/* dark: Cobalt. Cool blue-black with trace-UI blue */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #0a0e13;
+  --sheet: #111820;
+  --ink: #dce3ea;
+  --ink-2: #98a4b1;
+  --ink-3: #5f6b78;
+  --rule: #24303b;
+  --accent: #8c9bff;
+  --number: #f2b24a;
+  --ok: #4cc68a;
+  --kind-edu: #52c3b5;
+  --kind-work: #8c9bff;
+  --kind-oss: #b590ff;
+  --term-bg: #05080b;
+  --term-acc: #93a3ff;
+}

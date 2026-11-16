@@ -1,0 +1,16 @@
+---
+/** One `kubectl describe` field: a sticky key on the left, its value on the right. */
+interface Props {
+  id: string;
+  label: string;
+  hint: string;
+  class?: string;
+}
+
+const { id, label, hint, class: valueClass } = Astro.props;
+---
+
+<section class="field" aria-labelledby={id}>
+  <h2 class="key" id={id}>{label}:<small>{hint}</small></h2>
+  <div class:list={['val', valueClass]}><slot /></div>
+</section>

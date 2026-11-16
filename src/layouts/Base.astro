@@ -1,0 +1,51 @@
+---
+import '@fontsource-variable/instrument-sans/wdth.css';
+import '@fontsource-variable/martian-mono/wdth.css';
+import '../styles/tokens.css';
+import '../styles/base.css';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/yaml" href="/akila.yaml" title="Profile as YAML" />
+    <link rel="alternate" type="application/json" href="/akila.json" title="Profile as JSON" />
+    <meta name="theme-color" content="#ece9ea" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <script is:inline>
+      // Runs before first paint: restores the visitor's theme and view without a flash.
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        try {
+          if (localStorage.getItem('akila.theme') === 'dark') {
+            d.setAttribute('data-theme', 'dark');
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0a0e13');
+          }
+          if (localStorage.getItem('akila.mode') === 'yaml') d.setAttribute('data-mode', 'yaml');
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

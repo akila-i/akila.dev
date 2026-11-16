@@ -1,0 +1,79 @@
+---
+import { KIND_LABEL, type Span } from '../data/profile';
+import { formatDuration, formatMonth } from '../lib/dates';
+import { layoutTrace } from '../lib/trace';
+
+interface Props {
+  spans: readonly Span[];
+  openSpan: string;
+  now: number;
+}
+
+const { spans, openSpan, now } = Astro.props;
+const { rows, ticks } = layoutTrace(spans, now);
+const pct = (n: number) => `${n.toFixed(2)}%`;
+const attrsOf = (s: Span) => ({ start: formatMonth(s.start), end: s.end ? formatMonth(s.end) : 'ongoing', ...s.attrs });
+---
+
+<p class="trace-hint">Select a span to see what I worked on.</p>
+<ol class="trace">
+  {
+    rows.map(({ span: s, left, width, months, ongoing }) => {
+      const open = s.id === openSpan;
+      return (
+        <li class="tr" style={`--kind:var(--kind-${s.kind})`}>
+          <button type="button" class="tr-row tr-grid" data-span={s.id} aria-expanded={open ? 'true' : 'false'} aria-controls={`tr-${s.id}`}>
+            <span class="tr-name">
+              <span class="caret" aria-hidden="true">▸</span>
+              <span class="sn">{s.name}</span>
+            </span>
+            <span class="mini-track" aria-hidden="true">
+              <span class:list={['mini-bar', { ongoing }]} style={`left:${pct(left)};width:${pct(width)}`} />
+            </span>
+            <span class="dur">{formatDuration(months)}</span>
+          </button>
+          <div class="tr-detail" id={`tr-${s.id}`} hidden={!open}>
+            <p class="sum">{s.summary}</p>
+            <dl class="attrs">
+              {Object.entries(attrsOf(s)).map(([k, v]) => (
+                <>
+                  <dt>{k}</dt>
+                  <dd>{v}</dd>
+                </>
+              ))}
+            </dl>
+            {s.highlights.length > 0 && (
+              <ul class="hl">
+                {s.highlights.map((h) => (
+                  <li>
+                    <span class="what">{h.what}</span>
+                    <span class="links">
+                      {h.links.map((l) => (
+                        <a href={l.href}>{l.label} ↗</a>
+                      ))}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </li>
+      );
+    })
+  }
+</ol>
+<div class="tr-grid axis-row" aria-hidden="true">
+  <span></span>
+  <span class="mini-axis">{ticks.map((t) => <span style={`left:${pct(t.left)}`}>{t.year}</span>)}</span>
+  <span></span>
+</div>
+<div class="legend" aria-hidden="true">
+  {
+    Object.entries(KIND_LABEL).map(([kind, label]) => (
+      <span style={`--kind:var(--kind-${kind})`}>
+        <i />
+        {label}
+      </span>
+    ))
+  }
+</div>

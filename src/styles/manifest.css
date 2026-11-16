@@ -1,0 +1,769 @@
+/* Mono runs: labels, keys, data, code. */
+.mark,
+.bar-ctl,
+.eyebrow,
+.describe dt,
+.small,
+.chip,
+.cond,
+.key,
+.focus h3,
+.stack,
+.w-date,
+.w-venue,
+.trace,
+.trace-hint,
+.axis-row,
+.legend,
+.rules,
+.rules-cap,
+.term,
+.yaml-head,
+.code,
+.foot,
+.scan span {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+}
+
+/* ---------- bar ---------- */
+.bar {
+  position: sticky;
+  top: var(--top);
+  z-index: 30;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  transition: background-color 0.25s ease;
+}
+.bar .wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  min-height: var(--bar-h);
+  flex-wrap: wrap;
+}
+.mark {
+  font-size: var(--step--1);
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+  margin-right: auto;
+}
+.mark span {
+  color: var(--accent);
+}
+.bar-ctl {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 2px;
+  background: var(--sheet);
+  font-size: var(--step--1);
+}
+.bar-ctl button {
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  padding: 0.28rem 0.7rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.bar-ctl button:hover {
+  color: var(--ink);
+}
+.mode button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.mode .sep {
+  color: var(--ink-3);
+  padding: 0 0.2rem;
+}
+.theme button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding-inline: 0.55rem 0.65rem;
+}
+.theme svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex: none;
+}
+.theme .moon-half {
+  fill: currentColor;
+  transition: transform 0.25s ease;
+  transform-origin: 8px 8px;
+}
+:root[data-theme='dark'] .theme .moon-half {
+  transform: rotate(180deg);
+}
+.yaml-link {
+  font-size: var(--step--1);
+  color: var(--ink-2);
+}
+
+/* Without JavaScript the toggles cannot work, so show a plain link instead. */
+:root:not(.js) .mode,
+:root:not(.js) .theme,
+:root.js .yaml-link {
+  display: none;
+}
+
+/* ---------- stage: two renderings stacked in one grid cell ---------- */
+.stage {
+  display: grid;
+  position: relative;
+}
+.layer {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+.layer-yaml,
+:root[data-mode='yaml'] .layer-human {
+  display: none;
+}
+:root[data-mode='yaml'] .layer-yaml {
+  display: block;
+}
+/* the layer being revealed during a switch sits on top and is clipped from the top down */
+.stage .layer.incoming {
+  display: block !important;
+  position: relative;
+  z-index: 2;
+  background: var(--paper);
+  clip-path: inset(0 0 calc(100% - var(--reveal, 0px)) 0);
+}
+.scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+}
+.scan.on {
+  opacity: 1;
+}
+.scan::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  height: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 14px var(--accent);
+}
+.scan span {
+  position: absolute;
+  right: max(16px, env(safe-area-inset-right, 0px));
+  top: 8px;
+  font-size: var(--step--2);
+  background: var(--accent);
+  color: var(--paper);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* ---------- hero ---------- */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 2.5rem 4rem;
+  align-items: end;
+  padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(2.5rem, 5vw, 4rem);
+}
+.eyebrow {
+  font-size: var(--step--2);
+  color: var(--ink-2);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.name {
+  font-family: var(--font-sans);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: var(--display);
+  line-height: 0.84;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  margin: 0.9rem 0 1.5rem;
+}
+.name span {
+  display: block;
+  width: fit-content;
+}
+.name span + span {
+  color: var(--accent);
+  margin-top: 0.04em;
+}
+.lead {
+  font-size: var(--step-2);
+  line-height: 1.3;
+  margin: 0;
+  max-width: 31ch;
+  font-stretch: 92%;
+}
+.describe {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.95rem 1.25rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+.describe dt {
+  font-size: var(--step--2);
+  color: var(--ink-2);
+  padding-top: 0.2rem;
+}
+.describe dd {
+  margin: 0;
+}
+.small {
+  font-size: var(--step--2);
+  color: var(--ink-2);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.chip {
+  font-size: var(--step--2);
+  padding: 0.18rem 0.45rem;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  color: var(--ink-2);
+  background: var(--sheet);
+  white-space: nowrap;
+}
+.cond {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--step--2);
+  font-weight: 600;
+}
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 22%, transparent);
+  flex: none;
+}
+.cond-msg {
+  margin: 0.35rem 0 0;
+  color: var(--ink-2);
+}
+
+/* ---------- fields: key column + value ---------- */
+.field {
+  display: grid;
+  grid-template-columns: var(--key-col) minmax(0, 1fr);
+  gap: 1rem 2.5rem;
+  padding-block: 2.75rem;
+}
+.key {
+  margin: 0;
+  font-size: var(--step--1);
+  font-weight: 700;
+  align-self: start;
+  position: sticky;
+  top: calc(var(--top) + var(--bar-h) + 1.25rem);
+}
+.key small {
+  display: block;
+  font-weight: 400;
+  color: var(--ink-2);
+  font-size: var(--step--2);
+  margin-top: 0.35rem;
+}
+.val {
+  min-width: 0;
+}
+
+/* spec */
+.focus {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2rem 2.25rem;
+}
+.focus h3 {
+  font-size: var(--step--1);
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0 0 0.65rem;
+}
+.focus p {
+  margin: 0 0 0.9rem;
+  max-width: 36ch;
+}
+.stack {
+  font-size: var(--step--2);
+  color: var(--ink-2);
+  line-height: 1.8;
+}
+
+/* ---------- trace: one row per span, expandable ---------- */
+.trace-hint {
+  margin: 0 0 0.8rem;
+  font-size: var(--step--2);
+  color: var(--ink-2);
+}
+.trace {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--step--2);
+  border-top: 1px solid var(--rule);
+}
+.tr {
+  border-bottom: 1px solid var(--rule);
+}
+.tr-grid {
+  display: grid;
+  grid-template-columns: 14.5rem minmax(0, 1fr) 5.5rem;
+  gap: 1rem;
+  align-items: center;
+}
+.tr-row {
+  width: 100%;
+  border: 0;
+  background: none;
+  text-align: left;
+  padding: 0.75rem 0.6rem 0.75rem 0.35rem;
+  cursor: pointer;
+  color: var(--ink);
+}
+.tr-row:hover {
+  background: color-mix(in srgb, var(--sheet) 70%, transparent);
+}
+.tr-row[aria-expanded='true'] {
+  background: var(--sheet);
+}
+.tr-name {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+.caret {
+  color: var(--ink-3);
+  width: 0.75rem;
+  flex: none;
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+.tr-row[aria-expanded='true'] .caret {
+  transform: rotate(90deg);
+  color: var(--ink);
+}
+.tr-row[aria-expanded='true'] .sn {
+  font-weight: 600;
+}
+.sn {
+  overflow-wrap: anywhere;
+}
+.dur {
+  color: var(--ink-2);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.mini-track {
+  position: relative;
+  height: 0.75rem;
+}
+.mini-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 2px;
+  background: var(--kind);
+}
+.mini-bar.ongoing {
+  border-radius: 2px 0 0 2px;
+}
+.mini-bar.ongoing::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--kind);
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+.tr-detail {
+  background: var(--sheet);
+  padding: 0.2rem 1.25rem 1.4rem 1.55rem;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 1.1rem 2.5rem;
+}
+.tr-detail .sum {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-stretch: 100%;
+  font-size: var(--step-0);
+  line-height: 1.5;
+  max-width: 64ch;
+  color: var(--ink);
+}
+.attrs {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.35rem 1.25rem;
+  margin: 0;
+  align-content: start;
+}
+.attrs dt {
+  color: var(--ink-2);
+}
+.attrs dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.hl {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.8rem;
+  align-content: start;
+}
+.hl li {
+  display: grid;
+  gap: 0.2rem;
+}
+.hl .what {
+  font-family: var(--font-sans);
+  font-stretch: 100%;
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.hl .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 1rem;
+}
+.hl a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.hl a:hover {
+  text-decoration: underline;
+}
+.axis-row {
+  padding: 0.5rem 0.6rem 0 0.35rem;
+  font-size: var(--step--2);
+}
+.mini-axis {
+  position: relative;
+  height: 1.2rem;
+  color: var(--ink-3);
+}
+.mini-axis span {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  margin-top: 1rem;
+  font-size: var(--step--2);
+  color: var(--ink-2);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.legend i {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 2px;
+  background: var(--kind);
+  display: inline-block;
+}
+
+/* Without JavaScript every span is shown open and the hint and carets go away. */
+:root:not(.js) .tr-detail[hidden] {
+  display: grid !important;
+}
+:root:not(.js) .tr-row {
+  cursor: default;
+}
+:root:not(.js) .caret,
+:root:not(.js) .trace-hint {
+  display: none;
+}
+
+/* ---------- writing ---------- */
+.w-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.w-row {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: 0.3rem 1.5rem;
+  padding-block: 1rem;
+  border-top: 1px solid var(--rule);
+  align-items: baseline;
+}
+.w-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.w-date {
+  font-size: var(--step--2);
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.w-title {
+  font-size: var(--step-1);
+  font-weight: 600;
+  line-height: 1.3;
+  font-stretch: 90%;
+  text-wrap: balance;
+}
+.w-title a {
+  text-decoration: none;
+}
+.w-title a:hover {
+  text-decoration: underline;
+}
+.w-venue {
+  display: block;
+  font-size: var(--step--2);
+  color: var(--ink-2);
+  margin-top: 0.3rem;
+}
+
+/* ---------- ingress ---------- */
+.ingress {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2rem 2.5rem;
+  align-items: start;
+}
+.rules {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: var(--step--1);
+}
+.rules li {
+  border-top: 1px solid var(--rule);
+}
+.rules li:first-child {
+  border-top: 0;
+}
+.rules a {
+  display: grid;
+  grid-template-columns: 3.5rem 5.5rem minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  text-decoration: none;
+  align-items: baseline;
+}
+.rules a:hover .to {
+  text-decoration: underline;
+}
+.rules .verb {
+  color: var(--ok);
+  font-weight: 600;
+}
+.rules .via {
+  color: var(--ink-2);
+}
+.rules .to {
+  overflow-wrap: anywhere;
+}
+.rules .arrow {
+  color: var(--ink-3);
+}
+.rules-cap {
+  font-size: var(--step--2);
+  color: var(--ink-2);
+  margin: 0 0 0.5rem;
+}
+.term {
+  background: var(--term-bg);
+  color: var(--term-ink);
+  border-radius: 6px;
+  padding: 1.1rem 1.25rem;
+  font-size: var(--step--2);
+  line-height: 1.8;
+  overflow-x: auto;
+  white-space: pre;
+  margin: 0;
+}
+.t-dim {
+  color: var(--term-dim);
+}
+.t-acc {
+  color: var(--term-acc);
+  font-weight: 600;
+}
+.t-ok {
+  color: var(--term-ok);
+}
+
+/* ---------- yaml ---------- */
+.yaml-head {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  font-size: var(--step--2);
+  color: var(--ink-2);
+  padding-block: clamp(2rem, 5vw, 3.5rem) 1rem;
+}
+.yaml-head b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.code {
+  margin: 0 0 3rem;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: var(--step--1);
+  line-height: 1.8;
+  padding-block: 1.1rem;
+  counter-reset: ln;
+  tab-size: 2;
+}
+.code .ln {
+  display: block;
+  white-space: pre;
+  width: max-content;
+  min-width: 100%;
+  padding-right: 1.5rem;
+}
+.code .ln::before {
+  counter-increment: ln;
+  content: counter(ln);
+  display: inline-block;
+  width: 3.5rem;
+  padding-right: 1.4rem;
+  text-align: right;
+  color: var(--ink-3);
+  user-select: none;
+}
+.y-key {
+  color: var(--ink);
+  font-weight: 600;
+}
+.y-str {
+  color: var(--accent);
+}
+.y-num {
+  color: var(--number);
+}
+.y-com {
+  color: var(--ink-3);
+  font-style: italic;
+}
+.y-pun {
+  color: var(--ink-3);
+}
+
+/* ---------- footer ---------- */
+.foot {
+  border-top: 1px solid var(--rule);
+  font-size: var(--step--2);
+  color: var(--ink-2);
+}
+.foot .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  padding-block: 1.5rem 2.25rem;
+}
+.foot b {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1020px) {
+  .focus,
+  .ingress {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+  .field {
+    grid-template-columns: 1fr;
+    gap: 1.1rem;
+    padding-block: 2.25rem;
+  }
+  .key {
+    position: static;
+  }
+  .key small {
+    display: inline;
+    margin-left: 0.6rem;
+  }
+  .w-row {
+    grid-template-columns: 1fr;
+  }
+  .tr-grid {
+    grid-template-columns: minmax(0, 1fr) 4.5rem;
+    grid-template-areas: 'name dur' 'track track';
+    gap: 0.4rem 0.75rem;
+  }
+  .tr-name {
+    grid-area: name;
+  }
+  .dur {
+    grid-area: dur;
+  }
+  .tr-grid .mini-track,
+  .tr-grid .mini-axis {
+    grid-area: track;
+  }
+  .axis-row > span:empty {
+    display: none;
+  }
+  .tr-detail {
+    grid-template-columns: 1fr;
+    padding-left: 1.1rem;
+    padding-right: 1rem;
+  }
+  .rules a {
+    grid-template-columns: 3rem 4.5rem minmax(0, 1fr) auto;
+    gap: 0.5rem;
+  }
+  .theme .label {
+    display: none;
+  }
+}

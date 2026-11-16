@@ -1,0 +1,51 @@
+---
+import type { Profile } from '../data/profile';
+import { API_VERSION, KIND } from '../lib/manifest';
+
+interface Props {
+  profile: Profile;
+}
+
+const { profile: p } = Astro.props;
+const [first, ...rest] = p.name.split(' ');
+---
+
+<header class="hero">
+  <div>
+    <p class="eyebrow">kind: {KIND} · apiVersion: {API_VERSION}</p>
+    <h1 class="name"><span>{first}</span> <span>{rest.join(' ')}</span></h1>
+    <p class="lead">{p.summary}</p>
+  </div>
+  <dl class="describe">
+    <dt>Role:</dt>
+    <dd>
+      {
+        p.roles.map((r, i) => (
+          <>
+            {i > 0 && <br />}
+            {r.href ? (
+              <>
+                {r.title} of <a href={r.href}>{r.org}</a>
+                {r.note && `, a ${r.note} project`}
+              </>
+            ) : (
+              `${r.title} at ${r.org}`
+            )}
+          </>
+        ))
+      }
+    </dd>
+    <dt>Location:</dt>
+    <dd>
+      {p.location.city}, {p.location.country}<br />
+      <span class="small"><span data-clock-wrap hidden><span data-clock></span> local · </span>UTC{p.location.utcOffset}</span>
+    </dd>
+    <dt>Labels:</dt>
+    <dd class="chips">{p.labels.map((l) => <span class="chip">focus={l}</span>)}</dd>
+    <dt>Conditions:</dt>
+    <dd>
+      <span class="cond"><span class="dot" aria-hidden="true"></span>{p.condition.type} · {p.condition.status} · {p.condition.reason}</span>
+      <p class="cond-msg">{p.condition.message}</p>
+    </dd>
+  </dl>
+</header>

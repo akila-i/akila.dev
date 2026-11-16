@@ -1,0 +1,30 @@
+---
+import type { Profile } from '../data/profile';
+import { cardLines, cardToHtml } from '../lib/card';
+
+interface Props {
+  profile: Profile;
+}
+
+const { profile: p } = Astro.props;
+const card = `<span class="t-dim">$</span> curl akila.dev\n${cardToHtml(cardLines(p))}`;
+---
+
+<div>
+  <p class="rules-cap">from: anyone</p>
+  <ul class="rules">
+    {
+      p.ingress.map((i) => (
+        <li>
+          <a href={i.href}>
+            <span class="verb">allow</span>
+            <span class="via">{i.via}</span>
+            <span class="to">{i.to}</span>
+            <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+<pre class="term" aria-label="What curl akila.dev returns" set:html={card} />
