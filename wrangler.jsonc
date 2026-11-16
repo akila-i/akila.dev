@@ -3,6 +3,11 @@
   "name": "akila-dev",
   "main": "worker/index.ts",
   "compatibility_date": "2026-11-01",
+  // Cloudflare creates the DNS records and certificates for these.
+  "routes": [
+    { "pattern": "akila.dev", "custom_domain": true },
+    { "pattern": "www.akila.dev", "custom_domain": true }
+  ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
