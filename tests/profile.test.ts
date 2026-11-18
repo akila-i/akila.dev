@@ -16,17 +16,23 @@ describe('profile', () => {
     expect(ProfileSchema.safeParse({ ...profile, openSpan: 'nope' }).success).toBe(false);
   });
 
-  it('only links over https', () => {
+  it('only links over https, apart from the one mailto', () => {
     const hrefs = [
       ...profile.writing.map((w) => w.href),
       ...profile.ingress.map((i) => i.href),
       ...profile.career.flatMap((s) => s.highlights.flatMap((h) => h.links.map((l) => l.href))),
     ];
-    expect(hrefs.every((h) => h.startsWith('https://'))).toBe(true);
+    expect(hrefs.filter((h) => !h.startsWith('https://'))).toEqual(['mailto:hello@akila.dev']);
   });
 
-  it('shows no email address anywhere until one can receive mail', () => {
-    expect(JSON.stringify(profile)).not.toMatch(/@[a-z0-9-]+\.[a-z]{2,}/i);
+  it('shows no email address except hello@akila.dev', () => {
+    const found = JSON.stringify(profile).match(/[\w.+-]+@[a-z0-9-]+(\.[a-z0-9-]+)+/gi) ?? [];
+    expect(new Set(found)).toEqual(new Set(['hello@akila.dev']));
+  });
+
+  it('rejects a mailto outside akila.dev', () => {
+    const ingress = [...profile.ingress, { via: 'email', to: 'someone@example.com', href: 'mailto:someone@example.com' }];
+    expect(ProfileSchema.safeParse({ ...profile, ingress }).success).toBe(false);
   });
 });
 

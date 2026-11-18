@@ -14,6 +14,7 @@ describe('curl card', () => {
         '  senior software engineer, wso2 · maintainer, openchoreo',
         '  observability · kubernetes · platform engineering',
         '',
+        '  email     hello@akila.dev',
         '  github    github.com/akila-i',
         '  linkedin  linkedin.com/in/akila-i',
         '  medium    akila-i.medium.com',

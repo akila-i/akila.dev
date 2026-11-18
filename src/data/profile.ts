@@ -13,6 +13,8 @@ import { z } from 'zod';
 
 const YearMonth = z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, 'expected YYYY-MM');
 const Href = z.url({ protocol: /^https$/ });
+/** Only addresses on akila.dev, so a personal inbox can't end up on the page. */
+const Mailto = z.string().regex(/^mailto:[a-z]+@akila\.dev$/, 'expected a mailto: on akila.dev');
 const Text = z.string().trim().min(1);
 
 export const PostSchema = z.object({
@@ -60,7 +62,7 @@ const RoleSchema = z.object({
 const IngressSchema = z.object({
   via: z.string().regex(/^[a-z]+$/),
   to: Text,
-  href: Href,
+  href: z.union([Href, Mailto]),
 });
 
 export const ProfileSchema = z
@@ -182,6 +184,7 @@ const raw: z.input<typeof ProfileSchema> = {
   ],
   writing: [posts.cncf, posts.cilium, posts.alerting, posts.gsoc, posts.azure],
   ingress: [
+    { via: 'email', to: 'hello@akila.dev', href: 'mailto:hello@akila.dev' },
     { via: 'github', to: 'github.com/akila-i', href: 'https://github.com/akila-i' },
     { via: 'linkedin', to: 'linkedin.com/in/akila-i', href: 'https://www.linkedin.com/in/akila-i' },
     { via: 'medium', to: 'akila-i.medium.com', href: 'https://akila-i.medium.com' },
